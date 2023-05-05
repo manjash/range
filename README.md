@@ -8,22 +8,22 @@
 - Start with Float (continuous type)
 - Request to create a range with start >= finish is invalid, throw an exception
 - Supported operations between 2 range class objects:
--- equal / not
--- comparison (more, less, and with equals). Python has a decorator total_ordering (or similar), use it for simplification.
--- range object has to be hashable. Range has to be immutable and when changes happen, this creates a new range obect all the time.
+  - equal / not
+  - comparison (more, less, and with equals). Python has a decorator total_ordering (or similar), use it for simplification.
+  - range object has to be hashable. Range has to be immutable and when changes happen, this creates a new range obect all the time.
 
 - Algorithmic part (like SET functionality):
--- 'contains' operation ('in'):
---- 1 element in the range object
---- 1 range object is fully included in another range object
--- Intersection of 2 range objects
--- union (has intersection - return range object, no intersection - return list)
--- difference (similar)
+  - 'contains' operation ('in'):
+    - 1 element in the range object
+    - 1 range object is fully included in another range object
+  - Intersection of 2 range objects
+  - union (has intersection - return range object, no intersection - return list)
+  - difference (similar)
 
 - More complicated:
--- Union for multiple range objects
+  - Union for multiple range objects
 
-- examples of ranges: [0, 5), [0, 5], (0, 5), (0, 5], (-inf, 5], (-inf, inf), [5, inf), empty
-- beautiful print (like above), read __str__ vs __repr__
+- examples of ranges: `[0, 5), [0, 5], (0, 5), (0, 5], (-inf, 5], (-inf, inf), [5, inf), empty`
+- beautiful print (like above), read `__str__` vs `__repr__`
 
 - tests
