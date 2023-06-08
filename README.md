@@ -1,5 +1,53 @@
 # range class
 
+Range is a class for operations with mathematical ranges (eg (0, 5] or (-Inf, -3)). It's not related to the standard python range function.
+Range object has to be hashable and can be used as a dictionary key.
+
+## Syntax
+Range has to have a start, an end and brakets indicating whether the start / end are included. `start` must be greater or equal to `end`.
+
+By default brackets are `[)`: `Range(5, 8.5)` represents `[5.0, 8.5)` range of floats.
+Custom brackets are defined as folllows: `Range(5, 8.5, "[]")` representing `[5.0, 8.5]`.
+
+### Infinite borders
+`None` represents `+/- Inf` for Range object:
+  - `Range(None, None, "()")` represents (-Inf, Inf)
+  - `Range(None, 5, "(]")` represents (-Inf, 5]
+
+Inf border requires an exclusive bracket, otherwise throws an error.
+As far as non-numerical range operations are possible, any range is included into `Range(None, None, "()")`, eg `"" in Range(None, None, "()") is True`
+
+### Empty Range object
+  - `Range(empty=True)`
+  - `Range(start, end, brackets)` object with `start == end` and at least one of the brackets being non-inclusive, eg `Range(5, 5, "(]")`.
+Exception: `None` represents `+/- Inf` for Range object, hence `Range(None, None, "()")` or Range(5, None) are not empty.
+
+## Supported opeations between 2 Range objects:
+  - equal: `Range(5, 6.5, "[)") == Range(5, 6.5) is True`
+  - not equal: `Range(5, 6.5, "[]") != Range(5, 6.5) is True`
+  - comparison (<, >, >=, <=). Algorithm for comparison:
+    - First try to order by `start`, if equal by `end` (both take brackets into account) 
+  - 'contains' operation ('in'):
+    - 1 element in the Range object: `5 in Range(5, 6) is True`
+    - 1 range object is fully included in another range object: `Range(3, 4) in Range(3, 4, "[]") is True`
+  - Intersection:
+    - `Range(3, 4).intersect(Range(3.5, 5)) == Range(3.5, 4.)`
+    - `Range(3, 4).intersect(Range(5, 6)) == Range(empty=True)`
+  - Union returns a `Range` object is objects intersect otherwise - a tuple of `Range` objects: 
+    - `Range(3, 4) + Range(4, 5) == Range(3., 5.)`
+    - `Range(3, 4) + Range(4.1, 5) == (Range(3, 5), Range(4.1, 5))`
+    - `Range(3, 4) + Range(empty=True) == Range(3., 4.)`
+  - Difference is defined as union without intersection:
+    - `Range(3, 4) - Range(4.1, 5) == (Range(3, 5), Range(4.1, 5))`
+    - `Range(3, 4) - Range(3.5, 3.6) == (Range(3., 3.5), Range(3.6, 4.))`
+    - `Range(3, 4) - Range(empty=True) == Range(3., 4.)`
+
+## Operations on multiple objects:
+Union and difference of multiple Range objects and a tuple of Range objects is also supported, for example:
+  - `Range(3, 4) - Range(3.5, 7) + Range(2.7, 2.9) == Range(2.7, 2.9), Range(3., 3.5), Range(4, 7)`
+  - `Range(3, 4) + (Range(3.5, 7), Range(3.6, 3.7), Range(7.5, 9)) + Range(2.7, 2.9) == (Range(2.7, 2.9), Range(3, 7), Range(7.5, 9))`
+
+!NB: difference for Range and tuple_of_Range_objects (eg Range(3, 4) - (Range(5, 6), Range(7, 8)) is not supported.
 
 ## Requirements:
 
