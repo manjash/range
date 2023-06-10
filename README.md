@@ -50,7 +50,11 @@ Union and difference of multiple Range objects and a tuple of Range objects is a
 
 **!NB:** difference for Range and tuple_of_Range_objects (eg `Range(3, 4) - (Range(5, 6), Range(7, 8)`) is not supported.
 
-## Requirements:
+
+
+--------------
+
+## Original Requirements:
 
 - Make a Range class with business logic similar to https://www.postgresql.org/docs/current/rangetypes.html.
 - Start with learning about python [typing](https://docs.python.org/3/library/typing.html) (everything will be strongly typed, learn mypy too). Additionally, take a look at [Generics](https://docs.python.org/3/library/typing.html#generics).
