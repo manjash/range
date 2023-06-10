@@ -47,7 +47,7 @@ Union and difference of multiple Range objects and a tuple of Range objects is a
   - `Range(3, 4) - Range(3.5, 7) + Range(2.7, 2.9) == Range(2.7, 2.9), Range(3., 3.5), Range(4, 7)`
   - `Range(3, 4) + (Range(3.5, 7), Range(3.6, 3.7), Range(7.5, 9)) + Range(2.7, 2.9) == (Range(2.7, 2.9), Range(3, 7), Range(7.5, 9))`
 
-!NB: difference for Range and tuple_of_Range_objects (eg Range(3, 4) - (Range(5, 6), Range(7, 8)) is not supported.
+!NB: difference for Range and tuple_of_Range_objects (eg `Range(3, 4) - (Range(5, 6), Range(7, 8)`) is not supported.
 
 ## Requirements:
 
