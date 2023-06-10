@@ -18,9 +18,10 @@ Inf border requires an exclusive bracket, otherwise throws an error.
 As far as non-numerical range operations are possible, any range is included into `Range(None, None, "()")`, eg `"" in Range(None, None, "()") is True`
 
 ### Empty Range object
-  - `Range(empty=True)`
+  - `Range(empty=True)` or `Range(None, None, None)`
   - `Range(start, end, brackets)` object with `start == end` and at least one of the brackets being non-inclusive, eg `Range(5, 5, "(]")`.
 Exception: `None` represents `+/- Inf` for Range object, hence `Range(None, None, "()")` or Range(5, None) are not empty.
+  - `print(Range(empty=True) == 'empty'`
 
 ## Supported opeations between 2 Range objects:
   - equal: `Range(5, 6.5, "[)") == Range(5, 6.5) is True`
