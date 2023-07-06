@@ -1,7 +1,9 @@
+from __future__ import annotations
 from functools import total_ordering
+from typing import Union, Any, Sequence
 
 
-def a_lt_b(a, b, pos):
+def a_lt_b(a, b, pos: str) -> bool:
     try:
         return (a is not None and b is not None and a < b) or\
             (a is None and b is not None and pos == "start") or \
@@ -10,85 +12,85 @@ def a_lt_b(a, b, pos):
         raise TypeError(e)
 
 
-def a_gt_b(a, b, pos):
+def a_gt_b(a, b, pos: str) -> bool:
     return a_lt_b(b, a, pos)
 
 
-def upper_end_in(self, other):
+def upper_end_in(self: Range, other: Range) -> bool:
     return other.end == self.end and (self.brackets[-1] == ']' or other.brackets[-1] == ')')
 
 
-def upper_end_eq_non_incl(self, other):
+def upper_end_eq_non_incl(self: Range, other: Range) -> bool:
     return self.end == other.end and (self.brackets[-1], other.brackets[-1]) == (')', ']')
 
 
-def lower_end_in(self, other):
+def lower_end_in(self: Range, other: Range) -> bool:
     return self.start == other.start and (self.brackets[0] == '[' or other.brackets[0] == '(')
 
 
-def is_empty(a):
+def is_empty(a) -> bool:
     return type(a) == Range and (a.start == a.end and a.start is not None and a.brackets != "[]") \
         or (a.brackets is None)
 
 
-def good_num_types(r, s):
+def good_num_types(r, s) -> bool:
     return type(s) in (int, float) and (type(r.start) in (int, float) or type(r.end) in (int, float))
 
 
-def good_types(r, s):
+def good_types(r, s) -> bool:
     return type(s) in {type(r.start), type(r.end)} or good_num_types(r, s)
 
 
-def normalise_tuple_of_range(t):
+def normalise_tuple_of_range(t: list[Range]) -> Union[Range, tuple[Range, ...]]:
     t = sorted(t)
     i = 1
     res = [t[0]]
     while i <= len(t) - 1:
-        if res[-1].intersect(t[i]) != Range(empty=True):
-            res[-1] += t[i]
-
+        intersection = res[-1].intersect(t[i])
+        if isinstance(intersection, Range) and intersection != Range(empty=True):
+            res[-1] += t[i]  # type: ignore
         else:
             res.append(t[i])
         i += 1
     return tuple(res)
 
 
-def union(*args):
+def union(*args: Range) -> Union[Range, Sequence[Range], bool]:
     if len(args) == 1:
-        return args
-    args = sorted(args)
-    res = args[0]
-    for j in range(len(args[1:])):
-        arg = args[1:][j]
+        return args[0]
+    args_sorted = sorted(list(args))
+    res: Union[list[Range], tuple[Range, ...], Range] = args_sorted[0]
+    for j in range(len(args_sorted[1:])):
+        arg = args_sorted[1:][j]
         if isinstance(res, Range):
-            res += arg  # can become tuple here
+            res += arg
             if isinstance(res, (tuple, list)):
-                res = sorted(list(res))
+                res = sorted(list(res))  # type == list
         elif isinstance(res, (tuple, list)):
             res = list(res)
-            res[-1] += arg
-            if isinstance(res[-1], tuple):
-                res = res[:-1] + list(res[-1])
-                res = sorted(res)
-                # print("3 res res", res)
+            sub_res = res[-1] + arg
+            if isinstance(sub_res, tuple):
+                res = sorted(res[:-1] + list(sub_res))
+            else:
+                res[-1] = sub_res
         else:
-            return False
+            return False  # type == bool
     return res if isinstance(res, Range) else tuple(res)
 
 
-def reverse_bracket(a):
+def reverse_bracket(a: str) -> str:
     lib = {"(": ")", ")": "(", "[": "]", "]": "["}
     return lib[a]
 
 
-def reverse_n_swap_bracket(a):
+def reverse_n_swap_bracket(a: str) -> str:
     lib = {"(": "[", ")": "]", "[": "(", "]": ")"}
     return lib[reverse_bracket(a)]
 
 
 @total_ordering
 class Range:
-    def __init__(self, start=None, end=None, brackets="[)", empty=False):
+    def __init__(self, start=None, end=None, brackets="[)", empty=False) -> None:
         if not empty and not (start == end == brackets and start is None):
             available_brackets = ["[]", "()", "[)", "(]"]
             if brackets not in available_brackets:
@@ -112,7 +114,7 @@ class Range:
         else:
             self.start = self.end = self.brackets = None
 
-    def __eq__(self, other):
+    def __eq__(self, other: Union[Range, Any]) -> bool:
         if not isinstance(other, Range):
             return NotImplemented
         if is_empty(other):
@@ -124,7 +126,7 @@ class Range:
             return True
         return False
 
-    def __lt__(self, other):
+    def __lt__(self, other: Union[Range, Any]) -> bool:
         # self < other
         if not isinstance(other, Range):
             return NotImplemented
@@ -148,7 +150,7 @@ class Range:
             return True
         return False
 
-    def __contains__(self, other):
+    def __contains__(self, other: Union[Range, Any]) -> bool:
         # other in self
         if not isinstance(other, Range):
             other = Range(other, other, "()") if other is None else Range(other, other, "[]")
@@ -169,7 +171,7 @@ class Range:
             return True
         return False
 
-    def intersect(self, other):
+    def intersect(self, other: Range) -> Union[bool, Range]:
         if not isinstance(other, Range):
             return False
         if is_empty(self) or is_empty(other):
@@ -190,10 +192,10 @@ class Range:
                 return res
         return Range(empty=True)
 
-    def is_single_element(self):
+    def is_single_element(self) -> bool:
         return self.start == self.end and self.brackets == "[]"
 
-    def __sub__(self, other):
+    def __sub__(self, other) -> Union[Range, tuple[Range, ...]]:
         if not isinstance(other, Range):
             return NotImplemented
         if is_empty(other) or is_empty(self) or self.intersect(other) == Range(empty=True):
@@ -210,7 +212,7 @@ class Range:
                 Range(sm.end, lg.end, reverse_n_swap_bracket(sm.brackets[-1]) + lg.brackets[-1])
         return Range(empty=True)
 
-    def __rsub__(self, other):
+    def __rsub__(self, other) -> Union[bool, Range, tuple[Range, ...]]:
         if isinstance(other, tuple):
             res = self
             for i in other:
@@ -218,11 +220,11 @@ class Range:
             return res
         return self - other
 
-    def __add__(self, other):
+    def __add__(self, other) -> Union[Range, tuple[Range, ...]]:
         if not isinstance(other, Range):
             # check that every element of the tuple is a Range
             if isinstance(other, tuple) and sum([isinstance(i, Range) for i in other]) == len(other):
-                return normalise_tuple_of_range(tuple([self] + list(other)))
+                return normalise_tuple_of_range([self] + list(other))
             return NotImplemented
         a, b = self, other
         # guarantee that a <= b
@@ -246,10 +248,10 @@ class Range:
         else:
             return a, b
 
-    def __radd__(self, other):
+    def __radd__(self, other: Range) -> Union[Range, tuple[Range, ...]]:
         return self + other
 
-    def format_single_range(self):
+    def format_single_range(self) -> str:
         if isinstance(self.start, int):
             self.start = float(self.start)
         if isinstance(self.end, int):
@@ -261,11 +263,11 @@ class Range:
             end = "+inf)"
         return f"{start}, {end}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         if is_empty(self):
             return 'empty'
         else:
             return self.format_single_range()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.start, self.end, self.brackets))
