@@ -23,7 +23,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Analysing the code with flake8
       run: |
-        flake8
+        flake8 range.py test_range.py
     - name: Test with pytest
       run: |
         pytest

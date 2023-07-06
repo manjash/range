@@ -168,9 +168,9 @@ for i in ["[]", "()", "[)", "(]"]:
 
 @pytest.mark.parametrize(('first', 'second', 'message'), test_cases)
 def test_comparison_lt(first: tuple,
-            second: tuple,
-            message: bool,
-            ) -> None:
+                       second: tuple,
+                       message: bool,
+                       ) -> None:
     r1 = Range(first[0], first[1], first[2])
     r2 = Range(second[0], second[1], second[2])
     comparison = r1 < r2
@@ -386,7 +386,9 @@ def test_add(first: tuple,
     r2 = second
     if type(message) == str:
 
-        if isinstance(second, tuple) or (first[0], first[2]) in [(None, "[)"), (None, '[]')] or (first[1], first[2]) in [(None, "(]"), (None, '[]')]:
+        if isinstance(second, tuple)\
+                or (first[0], first[2]) in [(None, "[)"), (None, '[]')]\
+                or (first[1], first[2]) in [(None, "(]"), (None, '[]')]:
             with pytest.raises(ValueError) as excinfo:
                 r1 = Range(first[0], first[1], first[2])
                 r2 = Range(second[0], second[1], second[2])
