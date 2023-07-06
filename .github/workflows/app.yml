@@ -21,6 +21,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install pylint pytest coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Analysing types with mypy
+      run: |
+        mypy range.py
     - name: Analysing the code with flake8
       run: |
         flake8 range.py test_range.py
