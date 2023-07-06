@@ -80,8 +80,3 @@ Union and difference of multiple Range objects and a tuple of Range objects is a
 - beautiful print (like above), read `__str__` vs `__repr__`
 
 - tests
-
-## Todo:
-  - mypy (locally)
-  - pylint (locally)
-  - github actions: test runs on push (pytest, pylint, mypy)
